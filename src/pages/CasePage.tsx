@@ -5,7 +5,7 @@ import { FALLBACK_CASES, getFallbackCase, mergeCases } from '../lib/caseFallback
 import {
   ArrowLeft, ArrowRight, Lock, Loader2, Crown, ClipboardList, Stethoscope,
   FlaskConical, Activity, Pill, MessageSquare, AlertTriangle, Lightbulb,
-  BookOpenCheck, HeartPulse, Baby, Scissors, Venus, Brain, Bone, Droplets,
+  BookOpenCheck, HeartPulse, Baby, Scissors, Brain, Bone, Droplets,
   Thermometer, Syringe, Bandage, BookOpen,
 } from 'lucide-react';
 
@@ -25,7 +25,7 @@ function visualIcon(c: MedicalCase) {
   if (/heart|hypertension|cardiac|chest/.test(t)) return HeartPulse;
   if (/baby|child|pediatric|paediatric/.test(t)) return Baby;
   if (/surgery|hernia|append|operative/.test(t)) return Scissors;
-  if (/pregnan|gyn|uter|ovary|vaginal/.test(t)) return Venus;
+  if (/pregnan|gyn|uter|ovary|vaginal/.test(t)) return HeartPulse;
   if (/headache|migraine|neuro|seiz/.test(t)) return Brain;
   if (/fracture|bone|joint|orthop/.test(t)) return Bone;
   if (/anaemia|anemia|bleed|blood/.test(t)) return Droplets;
