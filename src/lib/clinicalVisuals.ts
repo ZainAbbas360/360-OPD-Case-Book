@@ -31,39 +31,14 @@ const visuals: Record<string, ClinicalVisual> = {
   'Haemorrhoids (Piles)': { image: commons('Hemorrhoids.png'), caption: 'Illustration of haemorrhoidal disease showing the anatomic concept of internal and external disease.', sourceLabel: 'BruceBlaus / Wikimedia Commons — CC BY-SA 4.0', sourceUrl: commonsPage('Hemorrhoids.png') },
 };
 
-const briefs: Record<string, VisualBrief> = {
-  'Type 2 Diabetes Mellitus': { label: 'Diabetes visual checklist', headline: 'Think beyond glucose', cues: ['HbA1c trend', 'Foot + pulses', 'Retina + kidneys'] },
-  'Essential Hypertension': { label: 'Hypertension visual checklist', headline: 'Confirm pressure, then assess organs', cues: ['Repeat BP correctly', 'ECG / LVH', 'Fundus + renal screen'] },
-  'Enteric Fever (Typhoid)': { label: 'Fever pattern', headline: 'Prolonged fever in an endemic setting', cues: ['Blood culture first', 'Abdominal signs', 'Perforation warning'] },
-  'Dengue Fever': { label: 'Dengue danger map', headline: 'The warning phase matters most', cues: ['Haematocrit trend', 'Platelet trend', 'Shock / bleeding signs'] },
-  'GERD / Dyspepsia': { label: 'Upper GI pathway', headline: 'Treat simple reflux — investigate alarms', cues: ['Heartburn / reflux', 'H. pylori', 'Dysphagia / weight loss'] },
-  'Bronchial Asthma / COPD Exacerbation': { label: 'Airway assessment', headline: 'Severity before prescription', cues: ['SpO₂ + RR', 'Peak flow', 'Silent chest = danger'] },
-  'Iron Deficiency Anaemia': { label: 'Anaemia pattern', headline: 'Confirm deficiency, then find the cause', cues: ['Microcytosis', 'Low ferritin', 'Blood-loss source'] },
-  'Hypothyroidism': { label: 'Thyroid profile', headline: 'Symptoms + TSH / FT4 pattern', cues: ['Bradycardia', 'Delayed reflexes', 'Raised TSH'] },
-  'Migraine / Tension-Type Headache': { label: 'Headache screen', headline: 'Primary headache only after red flags are excluded', cues: ['Aura pattern', 'Neuro exam', 'Thunderclap / papilloedema'] },
-  'Urinary Tract Infection (Adult)': { label: 'UTI pathway', headline: 'Lower UTI versus pyelonephritis', cues: ['Dysuria + frequency', 'Urinalysis', 'Fever / loin pain'] },
-  'Acute Gastroenteritis (Diarrhoea)': { label: 'Hydration first', headline: 'Assess dehydration before medicines', cues: ['Oral intake', 'Capillary refill', 'Urine output'] },
-  'Acute Otitis Media': { label: 'Otoscopy focus', headline: 'The tympanic membrane makes the diagnosis', cues: ['Bulging TM', 'Middle-ear effusion', 'Mastoid tenderness'] },
-  'Acute Pharyngitis / Tonsillitis': { label: 'Throat examination', headline: 'Viral versus streptococcal pattern', cues: ['Tonsillar exudate', 'Nodes', 'No cough / fever'] },
-  'Bronchiolitis': { label: 'Infant respiratory assessment', headline: 'Work of breathing guides severity', cues: ['Chest recession', 'Feeding', 'SpO₂'] },
-  'Febrile Seizures': { label: 'Seizure classification', headline: 'Simple versus complex febrile seizure', cues: ['Duration', 'Focality', 'Recurrence <24 h'] },
-  'Intestinal Worm Infestation': { label: 'Parasitic disease clues', headline: 'Treat, but also address reinfection', cues: ['Stool / worm history', 'Anaemia / nutrition', 'Hygiene + deworming'] },
-  'Protein-Energy Malnutrition (SAM/MAM)': { label: 'Nutrition triage', headline: 'Anthropometry + oedema define severity', cues: ['MUAC', 'Weight-for-height', 'Bilateral oedema'] },
-  'Abnormal Uterine Bleeding / Menorrhagia': { label: 'AUB framework', headline: 'Think PALM–COEIN', cues: ['Pregnancy test', 'CBC / ferritin', 'Structural cause'] },
-  'Anaemia in Pregnancy': { label: 'Pregnancy anaemia', headline: 'Severity + gestation + cause', cues: ['Hb level', 'Ferritin', 'Maternal symptoms'] },
-  'Dysmenorrhoea (Painful Periods)': { label: 'Pelvic pain screen', headline: 'Primary pain versus secondary pathology', cues: ['Cycle relation', 'Dyspareunia', 'Pelvic examination if indicated'] },
-  'Menopause': { label: 'Menopause review', headline: 'Symptoms, risk profile and shared decisions', cues: ['Vasomotor symptoms', 'Bone health', 'HRT contraindications'] },
-  'Pre-eclampsia': { label: 'Obstetric emergency screen', headline: 'Hypertension plus maternal or fetal risk', cues: ['BP ≥140/90', 'Proteinuria / organs', 'Fetal assessment'] },
-  'Routine Antenatal Care Visit': { label: 'Antenatal checklist', headline: 'Every visit should answer: mother well, baby well?', cues: ['BP + urine', 'Growth + FHR', 'Vaccines / supplements'] },
-  'Urinary Tract Infection in Pregnancy': { label: 'Pregnancy UTI', headline: 'Culture matters because complications matter', cues: ['Urine culture', 'Pregnancy-safe antibiotic', 'Pyelonephritis signs'] },
-  'Vaginal Discharge / Vaginitis': { label: 'Discharge pattern', headline: 'History, pH and examination guide the cause', cues: ['Colour / odour', 'Pruritus', 'STI risk'] },
-  'Anal Fissure': { label: 'Anorectal anatomy', headline: 'Painful defecation with a linear tear', cues: ['Posterior midline', 'Sentinel tag', 'Avoid traumatic DRE'] },
-};
-
 export function visualForCase(title: string): ClinicalVisual | null {
   return visuals[title] ?? null;
 }
 
 export function visualBriefForCase(title: string): VisualBrief {
-  return briefs[title] ?? { label: 'Case-specific focus', headline: title, cues: ['Key presentation', 'Focused examination', 'Red flags + next step'] };
+  return {
+    label: 'Clinical Case',
+    headline: title,
+    cues: [],
+  };
 }
