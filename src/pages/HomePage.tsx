@@ -4,7 +4,7 @@ import { supabase, MedicalCase } from '../lib/supabase';
 import { FALLBACK_CASES, mergeCases } from '../lib/caseFallback';
 import {
   Search, Lock, Crown, ShieldCheck, Sparkles, Loader2, Stethoscope, Scissors,
-  Baby, Venus, HeartPulse, Activity, Brain, Bone, Droplets, Thermometer,
+  Baby, HeartPulse, Activity, Brain, Bone, Droplets, Thermometer,
   ArrowRight, Grid3X3, BookOpen, Syringe, Bandage,
 } from 'lucide-react';
 
@@ -21,7 +21,7 @@ const palettes: Record<string, Palette> = {
 function specialtyIcon(specialty: string) {
   if (specialty === 'Surgery') return Scissors;
   if (specialty === 'Pediatrics') return Baby;
-  if (specialty === 'Gynae/Obs') return Venus;
+  if (specialty === 'Gynae/Obs') return HeartPulse;
   return Stethoscope;
 }
 
