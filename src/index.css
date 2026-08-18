@@ -37,6 +37,15 @@
   }
 }
 
+/* Keep the no-image case hero simple: icon + disease name only. */
+article > section.relative.overflow-hidden.bg-gradient-to-br p.mt-1.text-white\/65.text-sm {
+  display: none;
+}
+
+article > section.relative.overflow-hidden.bg-gradient-to-br div.mt-4.flex.flex-wrap.gap-2:empty {
+  display: none;
+}
+
 @media print {
   body * {
     visibility: hidden !important;
