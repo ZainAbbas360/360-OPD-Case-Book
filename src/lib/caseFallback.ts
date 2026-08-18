@@ -6,6 +6,12 @@ function joinLines(items?: string[]) {
   return (items ?? []).join('\n');
 }
 
+function normalizeSpecialty(name: string) {
+  const value = name.trim();
+  if (value.toLowerCase() === 'paediatrics' || value.toLowerCase() === 'pediatrics') return 'Pediatrics';
+  return value;
+}
+
 function mapLegacyCase(c: LegacyCase, index: number): MedicalCase {
   const rx = c.rx?.length
     ? `\n\nPRESCRIPTION:\n${c.rx.map((r) => `${r.drug}${r.brand ? ` (${r.brand})` : ''}: ${r.dose}${r.note ? ` — ${r.note}` : ''}`).join('\n')}`
@@ -14,7 +20,7 @@ function mapLegacyCase(c: LegacyCase, index: number): MedicalCase {
   return {
     id: c.id,
     title: c.title,
-    specialty: SPEC_META[c.spec].name,
+    specialty: normalizeSpecialty(SPEC_META[c.spec].name),
     patient_age: null,
     patient_gender: null,
     chief_complaint: c.tags?.join(', ') || null,
@@ -41,7 +47,7 @@ export const FALLBACK_CASES: MedicalCase[] = ALL_CASES.map(mapLegacyCase);
 export function mergeCases(databaseCases: MedicalCase[] = []): MedicalCase[] {
   const byTitle = new Map<string, MedicalCase>();
   for (const c of FALLBACK_CASES) byTitle.set(c.title.trim().toLowerCase(), c);
-  for (const c of databaseCases) byTitle.set(c.title.trim().toLowerCase(), c);
+  for (const c of databaseCases) byTitle.set(c.title.trim().toLowerCase(), { ...c, specialty: normalizeSpecialty(c.specialty) });
   return Array.from(byTitle.values());
 }
 
