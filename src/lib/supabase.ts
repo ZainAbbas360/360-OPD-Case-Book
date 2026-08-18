@@ -1,9 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL as string;
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+// Public Supabase browser configuration for the production project.
+// The publishable key is intended for client-side use; access is still
+// controlled by Supabase Auth and Row Level Security policies.
+const url = 'https://zimgdbklbnjaseopvqua.supabase.co';
+const publishableKey = 'sb_publishable_iQnoTcuCH78H6oCjVehMcQ_SaoEvHsf';
 
-export const supabase = createClient(url, anonKey, {
+export const supabase = createClient(url, publishableKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
