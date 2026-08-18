@@ -2,11 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase, MedicalCase } from '../lib/supabase';
 import { FALLBACK_CASES, getFallbackCase, mergeCases } from '../lib/caseFallback';
+import { visualForCase, ClinicalVisual } from '../lib/clinicalVisuals';
 import {
   ArrowLeft, ArrowRight, Lock, Loader2, Crown, ClipboardList, Stethoscope,
   FlaskConical, Activity, Pill, MessageSquare, AlertTriangle, Lightbulb,
   BookOpenCheck, HeartPulse, Baby, Scissors, Brain, Bone, Droplets,
-  Thermometer, Syringe, Bandage, BookOpen,
+  Thermometer, Syringe, Bandage, BookOpen, ExternalLink,
 } from 'lucide-react';
 
 type Props = { caseId: string; onNavigate: (page: string) => void };
@@ -78,11 +79,13 @@ export default function CasePage({ caseId, onNavigate }: Props) {
 
   const locked = !isPremium && !caseData.is_free;
   const VisualIcon = visualIcon(caseData);
+  const teachingVisual = visualForCase(caseData.title);
+  const heroImage = caseData.image_url || teachingVisual?.image || null;
 
   return <div className="max-w-5xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
     <button onClick={() => onNavigate('home')} className="inline-flex items-center gap-2 text-ink-muted hover:text-ink text-sm font-medium mb-5"><ArrowLeft className="w-4 h-4" /> All cases</button>
     <article className="rounded-3xl overflow-hidden bg-paper-card border border-line shadow-card">
-      {caseData.image_url ? <div className="h-48 sm:h-72 overflow-hidden bg-paper-dim"><img src={caseData.image_url} alt={caseData.title} className="w-full h-full object-cover" /></div> : <div className="relative h-40 sm:h-52 overflow-hidden bg-gradient-to-br from-med-700 via-med-600 to-sky-600"><div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" /><div className="absolute -left-8 bottom-0 w-36 h-36 rounded-full bg-white/10 blur-2xl" /><div className="relative h-full flex items-center justify-center"><div className="w-24 h-24 rounded-3xl bg-white/15 border border-white/20 backdrop-blur flex items-center justify-center shadow-xl"><VisualIcon className="w-12 h-12 text-white" /></div><BookOpen className="absolute right-8 bottom-6 w-10 h-10 text-white/15" /></div></div>}
+      {heroImage ? <ClinicalHero image={heroImage} title={caseData.title} visual={teachingVisual} /> : <div className="relative h-40 sm:h-52 overflow-hidden bg-gradient-to-br from-med-700 via-med-600 to-sky-600"><div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" /><div className="absolute -left-8 bottom-0 w-36 h-36 rounded-full bg-white/10 blur-2xl" /><div className="relative h-full flex items-center justify-center"><div className="w-24 h-24 rounded-3xl bg-white/15 border border-white/20 backdrop-blur flex items-center justify-center shadow-xl"><VisualIcon className="w-12 h-12 text-white" /></div><BookOpen className="absolute right-8 bottom-6 w-10 h-10 text-white/15" /></div></div>}
 
       <header className="p-5 sm:p-8 border-b border-line bg-gradient-to-br from-white via-white to-med-50/50">
         <div className="flex items-center gap-2 mb-3 flex-wrap"><span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-med-100 text-med-700">{caseData.specialty}</span>{caseData.is_free && <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-peds-100 text-peds-700">Free case</span>}</div>
@@ -99,13 +102,19 @@ export default function CasePage({ caseId, onNavigate }: Props) {
           <ClinicalSection icon={<Activity className="w-4 h-4" />} title="Diagnosis & Clinical Impression" tone="red" text={caseData.diagnosis} />
           <ManagementSection text={caseData.management} />
           <DiscussionSection text={caseData.discussion} />
-          <EvidenceNote />
         </div> : <LockedContent onNavigate={onNavigate} loggedIn={!!profile} />}
       </div>
     </article>
 
     <CaseNavigator previous={previous} next={next} onNavigate={onNavigate} />
   </div>;
+}
+
+function ClinicalHero({ image, title, visual }: { image: string; title: string; visual: ClinicalVisual | null }) {
+  return <figure className="bg-ink">
+    <div className="h-56 sm:h-80 overflow-hidden flex items-center justify-center bg-gradient-to-br from-ink to-med-900"><img src={image} alt={`Teaching visual for ${title}`} className="w-full h-full object-contain sm:object-cover" /></div>
+    {visual && <figcaption className="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-ink to-med-900 text-white/90"><p className="text-sm leading-6"><strong className="text-white">Key visual finding:</strong> {visual.caption}</p><a href={visual.sourceUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-white/65 hover:text-white transition">{visual.sourceLabel}<ExternalLink className="w-3 h-3" /></a></figcaption>}
+  </figure>;
 }
 
 function cleanText(text: string | null | undefined) {
@@ -149,10 +158,6 @@ function BulletList({ text }: { text: string }) {
   if (!items.length) return null;
   if (items.length === 1) return <p className="text-ink-soft leading-7">{items[0]}</p>;
   return <ul className="space-y-2 text-ink-soft leading-7">{items.map((x, i) => <li key={i} className="flex gap-3"><span className="mt-[0.7rem] w-1.5 h-1.5 rounded-full bg-med-600 shrink-0" /><span>{x}</span></li>)}</ul>;
-}
-
-function EvidenceNote() {
-  return <aside className="rounded-2xl border border-sky-200 bg-gradient-to-r from-sky-50 to-white p-4 sm:p-5"><div className="flex gap-3"><BookOpenCheck className="w-5 h-5 text-sky-700 shrink-0 mt-0.5" /><div><h2 className="font-bold text-sky-900">Evidence-based prescribing</h2><p className="mt-1 text-sm text-ink-soft leading-6">Treatment choices should be reconciled with the latest disease-specific guideline and local resistance patterns. For antibiotics, confirm indication, choose the narrowest appropriate agent, correct dose/route, and shortest effective duration.</p><p className="mt-2 text-xs text-ink-muted">Core references: current disease-specific NICE/WHO guidance and local protocols where resistance patterns differ.</p></div></div></aside>;
 }
 
 function CaseNavigator({ previous, next, onNavigate }: { previous: MedicalCase | null; next: MedicalCase | null; onNavigate: (p: string) => void }) {
