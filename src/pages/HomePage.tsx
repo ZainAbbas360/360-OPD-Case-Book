@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase, MedicalCase } from '../lib/supabase';
 import { FALLBACK_CASES, mergeCases } from '../lib/caseFallback';
+import { visualForCase, visualBriefForCase } from '../lib/clinicalVisuals';
 import {
   Search, Lock, Crown, ShieldCheck, Sparkles, Loader2, Stethoscope, Scissors,
   Baby, HeartPulse, Activity, Brain, Bone, Droplets, Thermometer,
@@ -30,11 +31,11 @@ function caseIcon(c: MedicalCase) {
   if (/heart|hypertension|cardiac|chest/.test(t)) return HeartPulse;
   if (/asthma|copd|breath|lung/.test(t)) return Activity;
   if (/headache|migraine|neuro|seiz/.test(t)) return Brain;
-  if (/fracture|bone|joint|orthop/.test(t)) return Bone;
+  if (/fracture|bone|joint|orthop|ricket/.test(t)) return Bone;
   if (/anaemia|anemia|bleed|blood/.test(t)) return Droplets;
   if (/fever|dengue|typhoid|infection/.test(t)) return Thermometer;
   if (/diabetes|insulin|glucose/.test(t)) return Syringe;
-  if (/wound|abscess|ulcer|trauma/.test(t)) return Bandage;
+  if (/wound|abscess|ulcer|trauma|cellulitis/.test(t)) return Bandage;
   return specialtyIcon(c.specialty);
 }
 
@@ -126,9 +127,13 @@ export default function HomePage({ onNavigate }: Props) {
 
 function CaseCard({ caseData, locked, onNavigate, palette }: { caseData: MedicalCase; locked: boolean; onNavigate: (p: string) => void; palette: Palette }) {
   const Icon = caseIcon(caseData);
+  const teachingVisual = visualForCase(caseData.title);
+  const brief = visualBriefForCase(caseData.title);
+  const cardImage = caseData.image_url || teachingVisual?.image || null;
+
   return <button onClick={() => onNavigate(`case:${caseData.id}`)} className={`group relative text-left rounded-2xl border border-line overflow-hidden bg-gradient-to-br ${palette.wrap} hover:shadow-card hover:-translate-y-1 transition-all duration-200`}>
     <div className={`absolute -right-8 -top-8 w-28 h-28 rounded-full blur-2xl ${palette.glow}`} />
-    {caseData.image_url ? <div className="relative h-36 overflow-hidden"><img src={caseData.image_url} alt={caseData.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />{locked && <div className="absolute inset-0 bg-ink/45 flex items-center justify-center"><Lock className="w-7 h-7 text-white" /></div>}</div> : <div className="relative h-28 px-5 pt-5"><div className={`w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center ${palette.icon}`}><Icon className="w-7 h-7" /></div><BookOpen className="absolute right-5 top-5 w-6 h-6 text-ink/10" /></div>}
+    {cardImage ? <div className="relative h-40 overflow-hidden bg-ink"><img src={cardImage} alt={`Clinical visual for ${caseData.title}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />{locked && <div className="absolute inset-0 bg-ink/45 flex items-center justify-center"><Lock className="w-7 h-7 text-white" /></div>}<div className="absolute inset-x-0 bottom-0 px-3 py-2 bg-gradient-to-t from-black/70 to-transparent"><span className="text-[10px] uppercase tracking-wider font-semibold text-white/90">Clinical visual</span></div></div> : <div className="relative min-h-36 px-5 py-5 overflow-hidden"><div className={`absolute -right-7 -top-7 w-28 h-28 rounded-full blur-2xl ${palette.glow}`} /><div className="relative flex items-start gap-3"><div className={`w-12 h-12 rounded-2xl shadow-lg flex items-center justify-center shrink-0 ${palette.icon}`}><Icon className="w-6 h-6" /></div><div><p className="text-[10px] uppercase tracking-[0.16em] font-bold text-ink-muted">{brief.label}</p><p className="mt-1 font-bold text-ink leading-snug">{brief.headline}</p></div></div><div className="relative mt-4 flex flex-wrap gap-1.5">{brief.cues.map((cue) => <span key={cue} className="px-2 py-1 rounded-full bg-white/80 border border-line text-[11px] font-medium text-ink-soft">{cue}</span>)}</div><BookOpen className="absolute right-4 bottom-4 w-6 h-6 text-ink/10" /></div>}
     <div className="relative p-4 sm:p-5 pt-3"><div className="flex items-center gap-2 mb-2 flex-wrap"><span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${palette.chip}`}>{caseData.specialty}</span>{caseData.is_free && !locked && <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">Free</span>}</div><h3 className="font-bold text-ink leading-snug text-base group-hover:text-med-700 transition">{caseData.title}</h3><p className="mt-1.5 text-sm text-ink-muted line-clamp-2">{caseData.excerpt}</p><div className="mt-4 flex items-center justify-between"><span className={`text-xs font-semibold ${locked ? 'text-peds-700' : 'text-med-700'}`}>{locked ? 'Premium case' : 'Open case'}</span><span className="w-8 h-8 rounded-full bg-white border border-line flex items-center justify-center group-hover:translate-x-0.5 transition"><ArrowRight className="w-4 h-4 text-ink-soft" /></span></div></div>
   </button>;
 }
