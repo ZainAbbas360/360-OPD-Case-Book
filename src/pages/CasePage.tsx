@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase, MedicalCase } from '../lib/supabase';
 import { FALLBACK_CASES, getFallbackCase, mergeCases } from '../lib/caseFallback';
-import { visualForCase, ClinicalVisual } from '../lib/clinicalVisuals';
+import { visualForCase, visualBriefForCase, ClinicalVisual, VisualBrief } from '../lib/clinicalVisuals';
 import {
   ArrowLeft, ArrowRight, Lock, Loader2, Crown, ClipboardList, Stethoscope,
   FlaskConical, Activity, Pill, MessageSquare, AlertTriangle, Lightbulb,
@@ -28,11 +28,11 @@ function visualIcon(c: MedicalCase) {
   if (/surgery|hernia|append|operative/.test(t)) return Scissors;
   if (/pregnan|gyn|uter|ovary|vaginal/.test(t)) return HeartPulse;
   if (/headache|migraine|neuro|seiz/.test(t)) return Brain;
-  if (/fracture|bone|joint|orthop/.test(t)) return Bone;
+  if (/fracture|bone|joint|orthop|ricket/.test(t)) return Bone;
   if (/anaemia|anemia|bleed|blood/.test(t)) return Droplets;
   if (/fever|dengue|typhoid|infection/.test(t)) return Thermometer;
   if (/diabetes|insulin|glucose/.test(t)) return Syringe;
-  if (/wound|abscess|ulcer|trauma/.test(t)) return Bandage;
+  if (/wound|abscess|ulcer|trauma|cellulitis/.test(t)) return Bandage;
   return Stethoscope;
 }
 
@@ -80,12 +80,13 @@ export default function CasePage({ caseId, onNavigate }: Props) {
   const locked = !isPremium && !caseData.is_free;
   const VisualIcon = visualIcon(caseData);
   const teachingVisual = visualForCase(caseData.title);
+  const visualBrief = visualBriefForCase(caseData.title);
   const heroImage = caseData.image_url || teachingVisual?.image || null;
 
   return <div className="max-w-5xl mx-auto px-3 sm:px-6 py-5 sm:py-8">
     <button onClick={() => onNavigate('home')} className="inline-flex items-center gap-2 text-ink-muted hover:text-ink text-sm font-medium mb-5"><ArrowLeft className="w-4 h-4" /> All cases</button>
     <article className="rounded-3xl overflow-hidden bg-paper-card border border-line shadow-card">
-      {heroImage ? <ClinicalHero image={heroImage} title={caseData.title} visual={teachingVisual} /> : <div className="relative h-40 sm:h-52 overflow-hidden bg-gradient-to-br from-med-700 via-med-600 to-sky-600"><div className="absolute -right-10 -top-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" /><div className="absolute -left-8 bottom-0 w-36 h-36 rounded-full bg-white/10 blur-2xl" /><div className="relative h-full flex items-center justify-center"><div className="w-24 h-24 rounded-3xl bg-white/15 border border-white/20 backdrop-blur flex items-center justify-center shadow-xl"><VisualIcon className="w-12 h-12 text-white" /></div><BookOpen className="absolute right-8 bottom-6 w-10 h-10 text-white/15" /></div></div>}
+      {heroImage ? <ClinicalHero image={heroImage} title={caseData.title} visual={teachingVisual} /> : <SpecificCaseHero title={caseData.title} brief={visualBrief} Icon={VisualIcon} />}
 
       <header className="p-5 sm:p-8 border-b border-line bg-gradient-to-br from-white via-white to-med-50/50">
         <div className="flex items-center gap-2 mb-3 flex-wrap"><span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-med-100 text-med-700">{caseData.specialty}</span>{caseData.is_free && <span className="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-peds-100 text-peds-700">Free case</span>}</div>
@@ -115,6 +116,22 @@ function ClinicalHero({ image, title, visual }: { image: string; title: string; 
     <div className="h-56 sm:h-80 overflow-hidden flex items-center justify-center bg-gradient-to-br from-ink to-med-900"><img src={image} alt={`Teaching visual for ${title}`} className="w-full h-full object-contain sm:object-cover" /></div>
     {visual && <figcaption className="px-4 sm:px-6 py-3.5 bg-gradient-to-r from-ink to-med-900 text-white/90"><p className="text-sm leading-6"><strong className="text-white">Key visual finding:</strong> {visual.caption}</p><a href={visual.sourceUrl} target="_blank" rel="noreferrer" className="mt-1.5 inline-flex items-center gap-1.5 text-xs text-white/65 hover:text-white transition">{visual.sourceLabel}<ExternalLink className="w-3 h-3" /></a></figcaption>}
   </figure>;
+}
+
+function SpecificCaseHero({ title, brief, Icon }: { title: string; brief: VisualBrief; Icon: React.ComponentType<{ className?: string }> }) {
+  return <section className="relative overflow-hidden bg-gradient-to-br from-med-800 via-med-700 to-sky-700 text-white">
+    <div className="absolute -right-16 -top-16 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+    <div className="absolute -left-10 bottom-0 w-44 h-44 rounded-full bg-peds-300/10 blur-3xl" />
+    <div className="relative px-5 sm:px-8 py-7 sm:py-10 grid sm:grid-cols-[auto,1fr] gap-5 items-center">
+      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-white/14 border border-white/20 backdrop-blur flex items-center justify-center shadow-xl"><Icon className="w-10 h-10 sm:w-12 sm:h-12 text-white" /></div>
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.2em] font-bold text-med-100">{brief.label}</p>
+        <h2 className="mt-1.5 text-xl sm:text-3xl font-bold font-display">{brief.headline}</h2>
+        <p className="mt-1 text-white/65 text-sm">Visual focus for {title}</p>
+        <div className="mt-4 flex flex-wrap gap-2">{brief.cues.map((cue) => <span key={cue} className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-xs sm:text-sm font-medium">{cue}</span>)}</div>
+      </div>
+    </div>
+  </section>;
 }
 
 function cleanText(text: string | null | undefined) {
