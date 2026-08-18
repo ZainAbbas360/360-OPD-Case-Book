@@ -8,6 +8,7 @@ import CasePage from './pages/CasePage';
 import SubscribePage from './pages/SubscribePage';
 import DashboardPage from './pages/DashboardPage';
 import AdminPage from './pages/AdminPage';
+import UsersAdminPage from './pages/UsersAdminPage';
 
 function Shell() {
   const { loading } = useAuth();
@@ -27,6 +28,7 @@ function Shell() {
   else if (page === 'subscribe') view = <SubscribePage onNavigate={setPage} />;
   else if (page === 'dashboard') view = <DashboardPage onNavigate={setPage} />;
   else if (page === 'admin') view = <AdminPage onNavigate={setPage} />;
+  else if (page === 'admin-users') view = <UsersAdminPage onNavigate={setPage} />;
   else if (page.startsWith('case:')) view = <CasePage caseId={page.slice(5)} onNavigate={setPage} />;
   else view = <HomePage onNavigate={setPage} />;
 
