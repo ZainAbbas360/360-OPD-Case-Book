@@ -1,5 +1,5 @@
 import { useAuth } from '../context/AuthContext';
-import { Stethoscope, LogOut, LayoutDashboard, Shield, Crown } from 'lucide-react';
+import { Stethoscope, LogOut, LayoutDashboard, Shield, Crown, Users } from 'lucide-react';
 
 type Props = {
   onNavigate: (page: string) => void;
@@ -31,12 +31,20 @@ export default function Navbar({ onNavigate, current }: Props) {
             />
           )}
           {profile?.is_admin && (
-            <NavBtn
-              label="Admin"
-              active={current === 'admin'}
-              onClick={() => onNavigate('admin')}
-              icon={<Shield className="w-4 h-4" />}
-            />
+            <>
+              <NavBtn
+                label="Admin"
+                active={current === 'admin'}
+                onClick={() => onNavigate('admin')}
+                icon={<Shield className="w-4 h-4" />}
+              />
+              <NavBtn
+                label="Users"
+                active={current === 'admin-users'}
+                onClick={() => onNavigate('admin-users')}
+                icon={<Users className="w-4 h-4" />}
+              />
+            </>
           )}
           {!profile?.is_premium && profile && (
             <button
