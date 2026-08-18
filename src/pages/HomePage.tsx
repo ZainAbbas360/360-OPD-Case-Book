@@ -5,7 +5,7 @@ import { FALLBACK_CASES, mergeCases } from '../lib/caseFallback';
 import {
   Search, Crown, ShieldCheck, Sparkles, Loader2, Stethoscope, Scissors,
   Baby, HeartPulse, Activity, Brain, Bone, Droplets, Thermometer,
-  ArrowRight, Grid3X3, Syringe, Bandage,
+  ArrowRight, Grid3X3, Syringe, Bandage, ChevronDown,
 } from 'lucide-react';
 
 type Props = { onNavigate: (page: string) => void };
@@ -95,7 +95,16 @@ export default function HomePage({ onNavigate }: Props) {
       <div className="sticky top-16 z-30 rounded-2xl border border-line bg-paper/90 backdrop-blur-xl shadow-soft p-3 sm:p-4 mb-7">
         <div className="flex flex-col lg:flex-row gap-3 lg:items-center">
           <div className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" /><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search disease, symptom or specialty…" className="w-full pl-9 pr-3 py-3 rounded-xl border border-line bg-white focus:border-med-500 focus:ring-2 focus:ring-med-100 outline-none transition" /></div>
-          <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0">
+
+          <div className="relative lg:hidden">
+            <label htmlFor="mobile-specialty" className="sr-only">Select subject</label>
+            <select id="mobile-specialty" value={spec} onChange={(e) => setSpec(e.target.value)} className="w-full appearance-none rounded-xl border border-line bg-white px-4 py-3 pr-11 text-sm font-semibold text-ink focus:border-med-500 focus:ring-2 focus:ring-med-100 outline-none transition cursor-pointer">
+              {specialties.map((s) => <option key={s} value={s}>{s === 'All' ? 'Select Subject — All Subjects' : s}</option>)}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-med-700" />
+          </div>
+
+          <div className="hidden lg:flex gap-2 overflow-x-auto pb-1 lg:pb-0">
             {specialties.map((s) => {
               const Icon = s === 'All' ? Grid3X3 : specialtyIcon(s);
               return <button key={s} onClick={() => setSpec(s)} className={`inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap border transition ${spec === s ? 'bg-ink text-white border-ink shadow-soft' : 'bg-white text-ink-soft border-line hover:border-med-300 hover:text-med-700'}`}><Icon className="w-4 h-4" /> {s}</button>;
