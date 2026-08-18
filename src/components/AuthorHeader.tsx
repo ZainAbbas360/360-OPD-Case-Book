@@ -8,10 +8,7 @@ export default function AuthorHeader() {
           <p className="text-[11px] sm:text-xs uppercase tracking-[0.22em] font-semibold text-med-200 mb-1.5">
             Authored & curated by
           </p>
-          <div className="flex items-center gap-2.5 flex-wrap">
-            <h2 className="font-display font-bold text-xl sm:text-2xl">Dr. Muhammad Zain Abbas</h2>
-            <span className="text-[11px] px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-white/90 font-semibold">MBBS</span>
-          </div>
+          <h2 className="font-display font-bold text-xl sm:text-2xl">Dr. Muhammad Zain Abbas</h2>
           <p className="text-white/70 text-sm mt-1.5">
             Clinical Author · Medical Educator · Founder, Medico 360
           </p>
